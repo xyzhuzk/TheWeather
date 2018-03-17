@@ -3,11 +3,13 @@ package android.example.com.theweather.Fragments;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.example.com.theweather.MainActivity;
 import android.example.com.theweather.R;
 import android.example.com.theweather.WeatherActivity;
 import android.example.com.theweather.db.City;
 import android.example.com.theweather.db.County;
 import android.example.com.theweather.db.Province;
+import android.example.com.theweather.gson.Weather;
 import android.example.com.theweather.util.HttpUtil;
 import android.example.com.theweather.util.Utility;
 import android.os.Bundle;
@@ -114,10 +116,17 @@ public class ChooseAreaFragment extends Fragment {
                     queryCounties();
                 }else if (currentLevel==LEVEL_COUNTY){
                     String weatherId=countyList.get(position).getWeatherId();
+                    if (getActivity() instanceof MainActivity){
                     Intent intent=new Intent(getActivity(), WeatherActivity.class);
                     intent.putExtra("weather_id",weatherId);
                     startActivity(intent);
                     getActivity().finish();
+                    }else if (getActivity() instanceof WeatherActivity){
+                        WeatherActivity activity=(WeatherActivity) getActivity();
+                        activity.drawerLayout.closeDrawers();
+                        activity.swipeRefresh.setRefreshing(true);
+                        activity.requestWeather(weatherId);
+                    }
                 }
 
             }
